@@ -114,8 +114,14 @@ sort psu respid
 * bar: one bar per cluster.  See references below.
 
 ********************************************************************************
-* For the opplot syntax to run, you'll need to put the .ado files that 
-* accompany this file somewhere in your Stata adopath.  This can 
+* For the opplot syntax to run, you'll need to acquire the .ado file from
+* https://github.com/BiostatGlobalConsulting/organ-pipe-plots
+*
+* Or perhaps you already have it if you have downloaded VCQI from
+* https://github.com/BiostatGlobalConsulting/vcqi-stata-public
+* and put its folders in your adopath.  
+*
+* Put the opplot.ado file somewhere in your Stata adopath.  This can 
 * be accompished in several ways:
 * 
 * Type the command: adopath + "<full path to folder where you save the .ado files>"
@@ -123,6 +129,9 @@ sort psu respid
 * Or save the .ado files in what Stata considers to be your PERSONAL folder.
 * (Type the command "adopath" to learn where your PERSONAL folder is.)
 ********************************************************************************
+
+* *Or* you can comment out these lines of code that start with 'opplot'.  
+* The plots are nice to see, but not crucial.
 
 * The distribution of respondents with the outcome across clusters varies 
 * markedly here
