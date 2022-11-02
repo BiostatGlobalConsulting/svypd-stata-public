@@ -468,7 +468,7 @@ foreach t in wald logit wilson jeffreys exact agresti fleiss {
 * Rhoda, Dale A. 2022 svypd-stata-pubic GitHub repository holding the program
 *    that was developed as part of the World Health Organization's Vaccination
 *    Coverage Quality Indicators (VCQI) suite of programs.
-*    https://github.com/BiostatGlobalConsulting/svypd-stata-public/upload/main
+*    https://github.com/BiostatGlobalConsulting/svypd-stata-public
 
 * Rhoda, Dale A. 2016. “Inchworm Plots: Visual Representation of Inferential 
 *    Uncertainty.” Presented at the Stata Conference 2016, Chicago, July. 
