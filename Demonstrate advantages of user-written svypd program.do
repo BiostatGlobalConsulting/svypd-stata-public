@@ -39,6 +39,14 @@
 *                               GitHub repositories in the coming days to 
 *                               correct this error.
 * 2020-05-28	Dale Rhoda      Added this revision history.
+* 2022-11-02	Dale Rhoda		Updated references to include the GitHub 
+*                               repository that holds svypd.ado and this
+*                               .do-file.
+*                               Added graph bar for users who do not have 
+*                               opplot.ado in their adopath
+*                               And fix a few small typographical errors.
+*                               Also modify opplot calls so the figures are
+*                               *not* exported by default.
 *
 ********************************************************************************
 ********************************************************************************
@@ -110,48 +118,6 @@ gen y100 = 1
 * Re-sort dataset into psu and respondent id order
 sort psu respid
 
-* Organ pipe plots show positive outcomes as a colored portion of a vertical
-* bar: one bar per cluster.  See references below.
-
-********************************************************************************
-* For the opplot syntax to run, you'll need to acquire the .ado file from
-* https://github.com/BiostatGlobalConsulting/organ-pipe-plots
-*
-* Or perhaps you already have it if you have downloaded VCQI from
-* https://github.com/BiostatGlobalConsulting/vcqi-stata-public
-* and put its folders in your adopath.  
-*
-* Put the opplot.ado file somewhere in your Stata adopath.  This can 
-* be accompished in several ways:
-* 
-* Type the command: adopath + "<full path to folder where you save the .ado files>"
-*
-* Or save the .ado files in what Stata considers to be your PERSONAL folder.
-* (Type the command "adopath" to learn where your PERSONAL folder is.)
-********************************************************************************
-
-* *Or* you can comment out these lines of code that start with 'opplot'.  
-* The plots are nice to see, but not crucial.
-
-* The distribution of respondents with the outcome across clusters varies 
-* markedly here
-opplot y0  , clustvar(psu) xtitle(Primary Sampling Units (PSUs)) title(y0)   name(y0  , replace) export(y0.png)  exportwidth(2000) //   0%
-opplot y01 , clustvar(psu) xtitle(Primary Sampling Units (PSUs)) title(y01)  name(y01 , replace) export(y01.png) exportwidth(2000) //   1%
-                                                                                                 
-opplot y50a, clustvar(psu) xtitle(Primary Sampling Units (PSUs)) title(y50a) name(y50a, replace) export(y50a.png) exportwidth(2000) // 50%; icc is 1; psu COMPLETELY determines outcome
-opplot y50b, clustvar(psu) xtitle(Primary Sampling Units (PSUs)) title(y50b) name(y50b, replace) export(y50b.png) exportwidth(2000) // 50%; icc is -1/3; psu is independent of outcome
-opplot y50c, clustvar(psu) xtitle(Primary Sampling Units (PSUs)) title(y50c) name(y50c, replace) export(y50c.png) exportwidth(2000) // 50%; icc is very near zero
-opplot y50d, clustvar(psu) xtitle(Primary Sampling Units (PSUs)) title(y50d) name(y50d, replace) export(y50d.png) exportwidth(2000) // 50%; icc is ~0.30, so outcome is spatially heterogeneous
-                                                                                                 
-opplot y75a, clustvar(psu) xtitle(Primary Sampling Units (PSUs)) title(y75a) name(y75a, replace) export(y75a.png) exportwidth(2000) // 75%; icc is nearly 1; psu NEARLY determines outcome
-opplot y75b, clustvar(psu) xtitle(Primary Sampling Units (PSUs)) title(y75b) name(y75b, replace) export(y75b.png) exportwidth(2000) // 75%; icc is -1/3; psu is independent of outcome
-opplot y75c, clustvar(psu) xtitle(Primary Sampling Units (PSUs)) title(y75c) name(y75c, replace) export(y75c.png) exportwidth(2000) // 75%; icc is very near zero
-opplot y75d, clustvar(psu) xtitle(Primary Sampling Units (PSUs)) title(y75d) name(y75d, replace) export(y75d.png) exportwidth(2000) // 75%; icc is ~-.26, so outcome is spatially heterogeneous
-                                                                                                
-opplot y99,  clustvar(psu) xtitle(Primary Sampling Units (PSUs)) title(y99)  name(y99 , replace) export(y99.png) exportwidth(2000) // 99%
-                                                                                                 
-opplot y100, clustvar(psu) xtitle(Primary Sampling Units (PSUs)) title(y100) name(y100, replace) export(y100.png) exportwidth(2000) // 100%
-
 label variable y0     "No one has the outcome"
 label variable y01    "1% have the outcome"
 label variable y50a   "50% - everyone in half the PSUs"
@@ -176,6 +142,78 @@ aorder
 
 * Save the dataset
 save survey_with_plausible_yet_perverse_proportions, replace
+
+
+********************************************************************************
+********************************************************************************
+* Organ pipe plots show positive outcomes as a colored portion of a vertical
+* bar: one bar per cluster.  See references below.
+
+********************************************************************************
+* For the opplot syntax to run, you'll need to acquire the .ado file from
+* https://github.com/BiostatGlobalConsulting/organ-pipe-plots
+*
+* Or perhaps you already have it if you have downloaded VCQI from
+* https://github.com/BiostatGlobalConsulting/vcqi-stata-public
+* and put its folders in your adopath.  
+*
+* Put the opplot.ado file somewhere in your Stata adopath.  This can 
+* be accompished in several ways:
+* 
+* Type the command: adopath + "<full path to folder where you save the .ado files>"
+*
+* Or save the .ado files in what Stata considers to be your PERSONAL folder.
+* (Type the command "adopath" to learn where your PERSONAL folder is.)
+********************************************************************************
+
+* *Or* if Stata does not find opplot.ado in your adopath, it will make
+* a set of simple bar charts instead.
+
+* The distribution of respondents with the outcome across clusters varies 
+* markedly here
+
+capture which opplotyahoo
+
+if _rc == 0 { // user has opplot.ado in their adopath
+
+	opplot y0  , clustvar(psu) xtitle(Primary Sampling Units (PSUs)) title(y0)   name(y0  , replace)  //   0%
+	opplot y01 , clustvar(psu) xtitle(Primary Sampling Units (PSUs)) title(y01)  name(y01 , replace)  //   1%
+																									 
+	opplot y50a, clustvar(psu) xtitle(Primary Sampling Units (PSUs)) title(y50a) name(y50a, replace)  // 50%; icc is 1; psu COMPLETELY determines outcome
+	opplot y50b, clustvar(psu) xtitle(Primary Sampling Units (PSUs)) title(y50b) name(y50b, replace)  // 50%; icc is -1/3; psu is independent of outcome
+	opplot y50c, clustvar(psu) xtitle(Primary Sampling Units (PSUs)) title(y50c) name(y50c, replace)  // 50%; icc is very near zero
+	opplot y50d, clustvar(psu) xtitle(Primary Sampling Units (PSUs)) title(y50d) name(y50d, replace)  // 50%; icc is ~0.30, so outcome is spatially heterogeneous
+																									 
+	opplot y75a, clustvar(psu) xtitle(Primary Sampling Units (PSUs)) title(y75a) name(y75a, replace)  // 75%; icc is nearly 1; psu NEARLY determines outcome
+	opplot y75b, clustvar(psu) xtitle(Primary Sampling Units (PSUs)) title(y75b) name(y75b, replace)  // 75%; icc is -1/3; psu is independent of outcome
+	opplot y75c, clustvar(psu) xtitle(Primary Sampling Units (PSUs)) title(y75c) name(y75c, replace)  // 75%; icc is very near zero
+	opplot y75d, clustvar(psu) xtitle(Primary Sampling Units (PSUs)) title(y75d) name(y75d, replace)  // 75%; icc is ~-.26, so outcome is spatially heterogeneous
+																									
+	opplot y99,  clustvar(psu) xtitle(Primary Sampling Units (PSUs)) title(y99)  name(y99 , replace)  // 99%
+																									 
+	opplot y100, clustvar(psu) xtitle(Primary Sampling Units (PSUs)) title(y100) name(y100, replace)  // 100%
+	
+} 
+else { // user does not have opplot.ado in their adopath
+	
+	graph bar y0  , over(psu,                    gap(0) label(angle(90) labsize(small))) ytitle(Percent of Cluster, size(small)) b1title(Primary Sampling Units (PSUs), size(small)) title(y0)   ylabel(0(.5)1,angle(0)) name(y0  , replace)  //   0%
+	graph bar y01 , over(psu, sort(1) descending gap(0) label(angle(90) labsize(small))) ytitle(Percent of Cluster, size(small)) b1title(Primary Sampling Units (PSUs), size(small)) title(y01)  ylabel(0(.5)1,angle(0)) name(y01 , replace)   //   1%
+																									 
+	graph bar y50a, over(psu, sort(1) descending gap(0) label(angle(90) labsize(small))) ytitle(Percent of Cluster, size(small)) b1title(Primary Sampling Units (PSUs), size(small)) title(y50a) ylabel(0(.5)1,angle(0)) name(y50a, replace)   // 50%; icc is 1; psu COMPLETELY determines outcome
+	graph bar y50b, over(psu, sort(1) descending gap(0) label(angle(90) labsize(small))) ytitle(Percent of Cluster, size(small)) b1title(Primary Sampling Units (PSUs), size(small)) title(y50b) ylabel(0(.5)1,angle(0)) name(y50b, replace)   // 50%; icc is -1/3; psu is independent of outcome
+	graph bar y50c, over(psu, sort(1) descending gap(0) label(angle(90) labsize(small))) ytitle(Percent of Cluster, size(small)) b1title(Primary Sampling Units (PSUs), size(small)) title(y50c) ylabel(0(.5)1,angle(0)) name(y50c, replace)   // 50%; icc is very near zero
+	graph bar y50d, over(psu, sort(1) descending gap(0) label(angle(90) labsize(small))) ytitle(Percent of Cluster, size(small)) b1title(Primary Sampling Units (PSUs), size(small)) title(y50d) ylabel(0(.5)1,angle(0)) name(y50d, replace)   // 50%; icc is ~0.30, so outcome is spatially heterogeneous
+																									 
+	graph bar y75a, over(psu, sort(1) descending gap(0) label(angle(90) labsize(small))) ytitle(Percent of Cluster, size(small)) b1title(Primary Sampling Units (PSUs), size(small)) title(y75a) ylabel(0(.5)1,angle(0)) name(y75a, replace)   // 75%; icc is nearly 1; psu NEARLY determines outcome
+	graph bar y75b, over(psu, sort(1) descending gap(0) label(angle(90) labsize(small))) ytitle(Percent of Cluster, size(small)) b1title(Primary Sampling Units (PSUs), size(small)) title(y75b) ylabel(0(.5)1,angle(0)) name(y75b, replace)   // 75%; icc is -1/3; psu is independent of outcome
+	graph bar y75c, over(psu, sort(1) descending gap(0) label(angle(90) labsize(small))) ytitle(Percent of Cluster, size(small)) b1title(Primary Sampling Units (PSUs), size(small)) title(y75c) ylabel(0(.5)1,angle(0)) name(y75c, replace)   // 75%; icc is very near zero
+	graph bar y75d, over(psu, sort(1) descending gap(0) label(angle(90) labsize(small))) ytitle(Percent of Cluster, size(small)) b1title(Primary Sampling Units (PSUs), size(small)) title(y75d) ylabel(0(.5)1,angle(0)) name(y75d, replace)   // 75%; icc is ~-.26, so outcome is spatially heterogeneous
+																									
+	graph bar y99,  over(psu, sort(1) descending gap(0) label(angle(90) labsize(small))) ytitle(Percent of Cluster, size(small)) b1title(Primary Sampling Units (PSUs), size(small)) title(y99)  ylabel(0(.5)1,angle(0)) name(y99 , replace) e// 99%
+																									 
+	graph bar y100, over(psu, sort(1) descending gap(0) label(angle(90) labsize(small))) ytitle(Percent of Cluster, size(small)) b1title(Primary Sampling Units (PSUs), size(small)) title(y100) ylabel(0(.5)1,angle(0)) name(y100, replace)   // 100%
+
+}
 
 ********************************************************************************
 ********************************************************************************
